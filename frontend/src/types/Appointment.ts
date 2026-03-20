@@ -5,9 +5,15 @@ export interface Doctor {
   specialty: string;
 }
 
+export interface Patient {
+  _id: string;
+  name: string;
+}
+
 export interface Appointment {
   _id: string;
   date: string;
   status: AppointmentStatus;
   doctor: Doctor;
+  patient: Patient;
 }
