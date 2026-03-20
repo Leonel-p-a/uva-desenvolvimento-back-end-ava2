@@ -6,7 +6,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 const app = express();
 
 app.use(cors({
-    origin: "https://"
+    origin: "https://uva-desenvolvimento-back-end-ava2.vercel.app/"
 }));
 app.use(express.json());
 
