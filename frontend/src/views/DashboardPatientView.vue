@@ -88,24 +88,6 @@ async function createAppointment() {
     }
 }
 
-// cancelar
-async function cancelAppointment(id: string) {
-    await api(`/appointments/${id}`, {
-        method: 'DELETE'
-    });
-
-    fetchAppointments();
-}
-
-// concluir
-async function completeAppointment(id: string) {
-    await api(`/appointments/${id}/complete`, {
-        method: 'PATCH'
-    });
-
-    fetchAppointments();
-}
-
 // buscar médicos
 async function fetchDoctors() {
     try {
@@ -246,16 +228,6 @@ onMounted(() => {
             <div>
                 <p>{{ new Date(appt.date).toLocaleDateString() }}</p>
                 <p>{{ new Date(appt.date).toLocaleTimeString() }}</p>
-            </div>
-
-            <div class="actions">
-                <button class="cancel" @click="cancelAppointment(appt._id)">
-                    Cancelar
-                </button>
-
-                <button class="complete" @click="completeAppointment(appt._id)">
-                    Concluir
-                </button>
             </div>
         </div>
 
@@ -425,29 +397,6 @@ h1 {
     align-items: center;
     justify-content: center;
     text-align: center;
-}
-
-/* ACTIONS */
-.actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.cancel {
-    background: #fee2e2;
-    color: #991b1b;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-}
-
-.complete {
-    background: #dbeafe;
-    color: #1e40af;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
 }
 
 /* HISTÓRICO */
