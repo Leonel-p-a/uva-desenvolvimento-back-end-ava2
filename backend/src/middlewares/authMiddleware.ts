@@ -12,6 +12,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
     const [, token] = authHeader.split(" ");
 
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload;
 

@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { CreateUserDTO } from "../dtos/CreateUserDTO.js";
 import { TokenPayload } from "../types/TokenPayload.js";
+import PatientModel from "../models/Patient.js";
 
 class AuthService {
     async register(data: CreateUserDTO) {
@@ -25,6 +26,12 @@ class AuthService {
             name,
             email,
             password: hashedPassword,
+        });
+
+        await PatientModel.create({
+            user: user._id,
+            name: user.name,
+            email: user.email,
         });
 
         return user;

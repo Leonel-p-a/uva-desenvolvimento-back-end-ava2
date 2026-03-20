@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
 import appointmentService from "../services/AppointmentService.js";
 import { AppError } from "../errors/AppError.js";
+import { CreateAppointmentDTO } from "../dtos/CreateAppointmentDTO.js";
 
 class AppointmentController {
     async create(req: Request, res: Response) {
-        const userId = req.user?.id;
+        const body = req.body as Omit<CreateAppointmentDTO, "userId">;
+        if (!req.user) {
+            throw new AppError("Usuário não autenticado", 401);
+        }
+        
+        const userId = req.user.id;
 
-        const appointment = await appointmentService.create({ ...req.body, patientId: userId });
+        const appointment = await appointmentService.create({ ...body, userId: userId });
 
         return res.status(201).json(appointment);
     }

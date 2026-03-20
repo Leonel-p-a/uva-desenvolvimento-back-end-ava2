@@ -6,11 +6,19 @@ import { CreateAppointmentDTO } from "../dtos/CreateAppointmentDTO.js";
 
 class AppointmentService {
     async create(data: CreateAppointmentDTO) {
-        const { patientId, doctorId, date } = data;
+        const { doctorId, date, userId } = data;
 
-        if (!patientId || !doctorId || !date) {
+        if (!doctorId || !date || !userId) {
             throw new AppError("Campos obrigatórios não preenchidos", 400);
         }
+
+        const patient = await PatientModel.findOne({ user: userId });
+
+        if (!patient) {
+            throw new AppError("Paciente não encontrado para este usuário", 404);
+        }
+
+        const patientId = patient._id;
 
         const APPOINTMENT_DURATION = 60;
         const start = new Date(date);
@@ -30,11 +38,6 @@ class AppointmentService {
 
         if (start.getHours() < 8 || end.getHours() >= 18) {
             throw new AppError("Consultas devem ser marcadas entre 08:00 e 18:00", 400);
-        }
-
-        const patientExists = await PatientModel.findById(patientId);
-        if (!patientExists) {
-            throw new AppError("Paciente não encontrado", 404);
         }
 
         const doctorExists = await DoctorModel.findById(doctorId);
