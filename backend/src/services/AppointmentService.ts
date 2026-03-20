@@ -89,17 +89,29 @@ class AppointmentService {
     }
 
     async findAll(userId: string, status?: string) {
+        const patient = await PatientModel.findOne({ user: userId });
+
+        if (!patient) {
+            throw new AppError("Paciente não encontrado", 404);
+        }
+    
         const filter: any = {
-            patient: userId
+            patient: patient._id
         };
-
+    
         const validStatus = ["scheduled", "cancelled", "completed"];
-
+    
         if (status && validStatus.includes(status)) {
             filter.status = status;
         }
-
+    
         return await AppointmentModel.find(filter)
+            .populate("patient")
+            .populate("doctor");
+    }
+
+    async findAllPatientsAppointments() {
+        return await AppointmentModel.find()
             .populate("patient")
             .populate("doctor");
     }

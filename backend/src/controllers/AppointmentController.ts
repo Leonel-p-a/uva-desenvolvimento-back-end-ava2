@@ -31,6 +31,12 @@ class AppointmentController {
         return res.json(appointments);
     }
 
+    async findAllPatientsAppointments(req: Request, res: Response) {
+        const appointments = await appointmentService.findAllPatientsAppointments();
+
+        return res.json(appointments);
+    }
+
     async cancel(req: Request, res: Response) {
         const id = req.params.id as string;
 
