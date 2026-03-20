@@ -43,7 +43,7 @@ function goBack() {
 
             <div class="input-group">
                 <label>Senha</label>
-                <input v-model="password" type="password" />
+                <input v-model="password" type="password" placeholder="••••••••" />
             </div>
 
             <button @click="handleRegister" class="btn-create-account">Criar conta</button>
