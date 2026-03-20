@@ -85,10 +85,16 @@ class AppointmentService {
         return appointment;
     }
 
-    async findAll(status?: string) {
+    async findAll(userId: string, status?: string) {
+        const filter: any = {
+            patient: userId
+        };
+
         const validStatus = ["scheduled", "cancelled", "completed"];
 
-        const filter = status && validStatus.includes(status) ? { status } : {};
+        if (status && validStatus.includes(status)) {
+            filter.status = status;
+        }
 
         return await AppointmentModel.find(filter)
             .populate("patient")

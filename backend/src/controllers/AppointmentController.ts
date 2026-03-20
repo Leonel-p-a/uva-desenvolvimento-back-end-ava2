@@ -1,15 +1,27 @@
 import { Request, Response } from "express";
 import appointmentService from "../services/AppointmentService.js";
+import { AppError } from "../errors/AppError.js";
 
 class AppointmentController {
     async create(req: Request, res: Response) {
-        const appointment = await appointmentService.create(req.body);
+        const userId = req.user?.id;
+
+        const appointment = await appointmentService.create({ ...req.body, patientId: userId });
+
         return res.status(201).json(appointment);
     }
 
     async findAll(req: Request, res: Response) {
+        if (!req.user) {
+            throw new AppError("Usuário não autenticado", 401);
+        }
+
+        const userId = req.user.id;
+
         const { status } = req.query;
-        const appointments = await appointmentService.findAll(status as string);
+
+        const appointments = await appointmentService.findAll(userId, status as string);
+
         return res.json(appointments);
     }
 

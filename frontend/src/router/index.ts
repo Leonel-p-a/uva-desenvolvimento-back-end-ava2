@@ -20,11 +20,11 @@ const routes = [
     component: CreateAccountView
   },
   {
-    path: '/patient',
+    path: '/dashboard-patient',
     component: DashboardPatient
   },
   {
-    path: '/admin',
+    path: '/dashboard-admin',
     component: DashboardAdmin
   }
 ];
