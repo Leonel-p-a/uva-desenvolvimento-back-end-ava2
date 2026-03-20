@@ -4,8 +4,16 @@ import { useRouter } from 'vue-router';
 import { api } from '../services/api';
 import type { Appointment } from '../types/Appointment';
 import type { Doctor } from '../types/Doctor';
+import type { AppointmentStatus } from '../types/Appointment';
 
 const router = useRouter();
+
+// mapear traducao de status
+const statusMap: Record<AppointmentStatus, string> = {
+    scheduled: "Agendada",
+    completed: "Realizada",
+    cancelled: "Cancelada"
+};
 
 // estados
 const appointments = ref<Appointment[]>([]);
@@ -168,9 +176,13 @@ async function fetchWeather() {
 
 function getWeatherIcon(description: string) {
     if (description.includes("chuva")) return "🌧️";
-    if (description.includes("nuvem")) return "☁️";
+    if (description.includes("nublado")) return "☁️";
     if (description.includes("céu limpo")) return "☀️";
     return "🌤️";
+}
+
+function translateStatus(status: AppointmentStatus) {
+    return statusMap[status];
 }
 
 onMounted(() => {
@@ -186,9 +198,14 @@ onMounted(() => {
 
         <!-- HEADER -->
         <div class="header">
-            <div>
-                <h1>Minhas Consultas</h1>
-                <p>Olá, {{ userName || 'Paciente' }}</p>
+            <div class="header-title-container">
+                <div class="calendar-icon">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                </div>
+                <div>
+                    <h1>Minhas Consultas</h1>
+                    <p class="user-greetings">Olá, {{ userName || 'Paciente' }}</p>
+                </div>
             </div>
 
             <button class="logout" @click="logout">Sair</button>
@@ -219,15 +236,17 @@ onMounted(() => {
         <div v-for="appt in upcoming" :key="appt._id" class="card upcoming">
             <div class="card-top">
                 <div>
-                    <h3>{{ appt.doctor.name }}</h3>
+                    <h3>Dr(a). {{ appt.doctor.name }}</h3>
                     <p class="specialty">{{ appt.doctor.specialty }}</p>
                 </div>
 
-                <span class="badge">Agendada</span>
+                <span class="badge">{{ translateStatus(appt.status) }}</span>
             </div>
 
-            <p>{{ new Date(appt.date).toLocaleDateString() }}</p>
-            <p>{{ new Date(appt.date).toLocaleTimeString() }}</p>
+            <div>
+                <p>{{ new Date(appt.date).toLocaleDateString() }}</p>
+                <p>{{ new Date(appt.date).toLocaleTimeString() }}</p>
+            </div>
 
             <div class="actions">
                 <button class="cancel" @click="cancelAppointment(appt._id)">
@@ -241,16 +260,21 @@ onMounted(() => {
         </div>
 
         <!-- HISTÓRICO -->
-        <h2>Histórico</h2>
+        <h2 class="history-title">Histórico</h2>
 
         <div v-if="history.length === 0" class="empty">
             Nenhum histórico
         </div>
 
         <div v-for="appt in history" :key="appt._id" class="card history">
-            <div>
-                <strong>{{ appt.doctor.name }}</strong>
-                <p class="specialty">{{ appt.doctor.specialty }}</p>
+            <div class="history-content">
+                <div class="person-icon">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                    <strong>{{ appt.doctor.name }}</strong>
+                    <p class="specialty">{{ appt.doctor.specialty }}</p>
+                </div>
             </div>
 
             <div class="date">
@@ -302,6 +326,7 @@ onMounted(() => {
     padding: 24px;
     background: #f5f6fa;
     min-height: 100vh;
+    font-size: 1.6rem;
 }
 
 /* HEADER */
@@ -309,6 +334,32 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.header-title-container {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.calendar-icon {
+    width: 50px;
+    height: 50px;
+    background: #5b4bff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+.user-greetings {
+    font-size: 1.6rem;
 }
 
 .weather-card {
@@ -342,6 +393,15 @@ onMounted(() => {
     padding: 16px;
     border-radius: 12px;
     margin-top: 10px;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.100);
+}
+
+.upcoming {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: 3px solid #5b4bff;
+    max-width: 650px;
 }
 
 .card-top {
@@ -361,6 +421,10 @@ onMounted(() => {
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 /* ACTIONS */
@@ -387,9 +451,35 @@ onMounted(() => {
 }
 
 /* HISTÓRICO */
+.history-title {
+    margin-top: 2rem;
+}
+
 .history {
     display: flex;
     justify-content: space-between;
+}
+
+.history-content {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.person-icon {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #5b4bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5b4bff;
+    font-size: 22px;
+}
+
+.material-symbols-outlined {
+    font-size: 30px;
 }
 
 .date {
