@@ -10,6 +10,17 @@ class WeatherController {
 
         return res.json(weather);
     }
+
+    async getWeatherByCoords(req: Request, res: Response) {
+        const { lat, lon } = req.query;
+    
+        const weather = await weatherService.getWeatherByCoords(
+            Number(lat),
+            Number(lon)
+        );
+    
+        return res.json(weather);
+    }
 }
 
 export default new WeatherController();

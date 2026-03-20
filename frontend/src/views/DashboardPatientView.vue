@@ -14,6 +14,8 @@ const history = ref<Appointment[]>([]);
 const doctors = ref<Doctor[]>([]);
 const errorMessage = ref('');
 const userName = ref('');
+const weather = ref<any>(null);
+const weatherError = ref('');
 
 // modal
 const showModal = ref(false);
@@ -132,10 +134,45 @@ function logout() {
     router.push('/login?role=patient');
 }
 
+function getLocation(): Promise<{ lat: number; lon: number }> {
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                resolve({
+                    lat: pos.coords.latitude,
+                    lon: pos.coords.longitude
+                });
+            },
+            () => reject("Permissão de localização negada")
+        );
+    });
+}
+
+async function fetchWeather() {
+    try {
+        const { lat, lon } = await getLocation();
+
+        const response = await api(`/weather/coords?lat=${lat}&lon=${lon}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Erro ao buscar clima");
+        }
+        
+        console.log("WEATHER RESPONSE:", data);
+
+        weather.value = data;
+
+    } catch (error: any) {
+        weatherError.value = error;
+    }
+}
+
 onMounted(() => {
     fetchAppointments();
     fetchDoctors();
     fetchUser();
+    fetchWeather();
 });
 </script>
 
@@ -150,6 +187,16 @@ onMounted(() => {
             </div>
 
             <button class="logout" @click="logout">Sair</button>
+        </div>
+
+        <div v-if="weather" class="weather-card">
+            <h3>📍 {{ weather.city }}</h3>
+            <p>🌡️ {{ weather.temperature }}°C</p>
+            <p>☁️ {{ weather.description }}</p>
+        </div>
+
+        <div v-else-if="weatherError">
+            <p>{{ weatherError }}</p>
         </div>
 
         <!-- NOVA CONSULTA -->
@@ -257,6 +304,13 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.weather-card {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 20px;
 }
 
 .logout {
