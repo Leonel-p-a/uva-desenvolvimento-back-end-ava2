@@ -4,6 +4,7 @@ import appointmentRoutes from "./AppointmentRoutes.js";
 import doctorRoutes from "./DoctorRoutes.js";
 import authRoutes from "./AuthRoutes.js";
 import viaCepRoutes from "./ViaCepRoutes.js";
+import weatherRoutes from "./WeatherRoutes.js";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use(doctorRoutes);
 router.use(appointmentRoutes);
 router.use(authRoutes);
 router.use(viaCepRoutes);
+router.use(weatherRoutes);
 
 export default router;
