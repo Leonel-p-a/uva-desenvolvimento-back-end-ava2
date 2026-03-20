@@ -8,8 +8,6 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
     });
   }
 
-  console.error(err);
-
   return res.status(500).json({
     error: "Erro interno do servidor"
   });
