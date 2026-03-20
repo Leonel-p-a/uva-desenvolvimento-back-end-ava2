@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import SelectRoleView from '../views/SelectRoleView.vue';
 import LoginView from '../views/LoginView.vue';
-import DashboardPatient from '../views/DashboardPatient.vue';
-import DashboardAdmin from '../views/DashboardAdmin.vue';
+import DashboardPatientView from '../views/DashboardPatientView.vue';
+import DashboardAdminView from '../views/DashboardAdminView.vue';
 import CreateAccountView from '../views/CreateAccountView.vue';
 
 const routes = [
@@ -21,11 +21,11 @@ const routes = [
   },
   {
     path: '/dashboard-patient',
-    component: DashboardPatient
+    component: DashboardPatientView
   },
   {
     path: '/dashboard-admin',
-    component: DashboardAdmin
+    component: DashboardAdminView
   }
 ];
 
