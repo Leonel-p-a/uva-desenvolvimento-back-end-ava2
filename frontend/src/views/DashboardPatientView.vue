@@ -80,6 +80,7 @@ async function createAppointment() {
             })
         });
 
+        alert('Consulta marcada com sucesso!');
         closeModal();
         fetchAppointments();
 
