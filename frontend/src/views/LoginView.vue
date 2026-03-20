@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { api } from '../services/api';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
@@ -9,6 +11,38 @@ const role = route.query.role;
 const title = role === 'admin'
     ? 'Login Colaborador'
     : 'Login Paciente';
+
+const email = ref('');
+const password = ref('');
+
+async function handleLogin() {
+    try {
+        const response = await api('/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                email: email.value,
+                password: password.value
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        localStorage.setItem('token', data.token);
+
+        if (role === 'admin') {
+            router.push('/dashboard-admin');
+        } else {
+            router.push('/dashboard-patient');
+        }
+
+    } catch (error: any) {
+        alert(error.message);
+    }
+}
 
 function goToRegister() {
     router.push('/register');
@@ -33,15 +67,15 @@ function goBack() {
 
             <div class="input-group">
                 <label>Email</label>
-                <input type="email" placeholder="seu@email.com" />
+                <input v-model="email" type="email" placeholder="seu@email.com" />
             </div>
 
             <div class="input-group">
                 <label>Senha</label>
-                <input type="password" placeholder="••••••••" />
+                <input v-model="password" type="password" placeholder="••••••••" />
             </div>
 
-            <button class="login-button">Entrar</button>
+            <button class="login-button" @click="handleLogin">Entrar</button>
 
             <p v-if="role === 'patient'" class="login-link">
                 Não tem conta?

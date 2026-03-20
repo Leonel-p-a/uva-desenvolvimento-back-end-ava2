@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { api } from '../services/api';
 
 const router = useRouter();
 
@@ -8,14 +9,30 @@ const name = ref('');
 const email = ref('');
 const password = ref('');
 
-function handleRegister() {
-    console.log({
-        name: name.value,
-        email: email.value,
-        password: password.value
-    });
+async function handleRegister() {
+    try {
+        const response = await api('/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                name: name.value,
+                email: email.value,
+                password: password.value
+            })
+        });
 
-    alert('Conta criada (simulação)');
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        alert('Conta criada com sucesso!');
+
+        router.push('/login?role=patient');
+
+    } catch (error: any) {
+        alert(error.message);
+    }
 }
 
 function goBack() {
