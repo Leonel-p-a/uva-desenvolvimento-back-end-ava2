@@ -158,8 +158,6 @@ async function fetchWeather() {
         if (!response.ok) {
             throw new Error(data.message || "Erro ao buscar clima");
         }
-        
-        console.log("WEATHER RESPONSE:", data);
 
         weather.value = data;
 
