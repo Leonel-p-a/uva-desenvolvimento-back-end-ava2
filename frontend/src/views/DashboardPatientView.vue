@@ -166,6 +166,13 @@ async function fetchWeather() {
     }
 }
 
+function getWeatherIcon(description: string) {
+    if (description.includes("chuva")) return "🌧️";
+    if (description.includes("nuvem")) return "☁️";
+    if (description.includes("céu limpo")) return "☀️";
+    return "🌤️";
+}
+
 onMounted(() => {
     fetchAppointments();
     fetchDoctors();
@@ -190,7 +197,7 @@ onMounted(() => {
         <div v-if="weather" class="weather-card">
             <h3>📍 {{ weather.city }}</h3>
             <p>🌡️ {{ weather.temperature }}°C</p>
-            <p>☁️ {{ weather.description }}</p>
+            <p>{{ getWeatherIcon(weather.description) }} {{ weather.description }}</p>
         </div>
 
         <div v-else-if="weatherError">
