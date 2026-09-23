@@ -2,9 +2,11 @@
 import { ref } from 'vue';
 import { api } from '../services/api';
 import { useRoute, useRouter } from 'vue-router';
+import { useLoading } from '../composables/useLoading';
 
 const route = useRoute();
 const router = useRouter();
+const { withLoading } = useLoading();
 
 const role = route.query.role;
 
@@ -14,24 +16,28 @@ const title = role === 'admin'
 
 const email = ref('');
 const password = ref('');
+const error = ref('');
 
 async function handleLogin() {
+    error.value = '';
+
+    if (!email.value.trim() || !password.value.trim()) {
+        error.value = 'Preencha e-mail e senha';
+        return;
+    }
+    
     try {
-        const response = await api('/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                email: email.value,
-                password: password.value
-            })
-        });
+        const response = await withLoading(
+            () => api('/login',
+                'POST',
+                {
+                    email: email.value,
+                    password: password.value
+                }),
+            'Carregando...'
+        )
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message);
-        }
-
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('token', response.token);
 
         if (role === 'admin') {
             router.push('/dashboard-admin');
@@ -39,8 +45,8 @@ async function handleLogin() {
             router.push('/dashboard-patient');
         }
 
-    } catch (error: any) {
-        alert(error.message);
+    } catch (e: any) {
+        error.value = e.message || 'Falha no login';
     }
 }
 
@@ -74,6 +80,8 @@ function goBack() {
                 <label>Senha</label>
                 <input v-model="password" type="password" placeholder="••••••••" />
             </div>
+
+            <p v-if="error" class="login-error">{{ error }}</p>
 
             <button class="login-button" @click="handleLogin">Entrar</button>
 
@@ -181,6 +189,13 @@ function goBack() {
 .input-group input:focus {
     border-color: #5b4bff;
     box-shadow: 0 0 0 2px rgba(91, 75, 255, 0.1);
+}
+
+.login-error {
+    color: #d33;
+    font-size: 13px;
+    margin-top: 8px;
+    text-align: center;
 }
 
 button {
