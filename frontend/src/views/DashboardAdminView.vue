@@ -31,9 +31,7 @@ const searchQuery = ref('');
 // exibir usuário
 async function fetchUser() {
     try {
-        const response = await api('/me');
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
+        const data = await api('/me');
         userName.value = data.name;
     } catch (error: any) {
         console.error('Erro ao buscar usuário:', error);
@@ -43,8 +41,7 @@ async function fetchUser() {
 // buscar consultas
 async function fetchAppointments() {
     try {
-        const response = await api('/appointments/all');
-        const data = await response.json();
+        const data = await api('/appointments/all');
         appointments.value = data;
         applyFilters();
     } catch (error: any) {
@@ -77,9 +74,9 @@ function applyFilters() {
 async function updateAppointmentStatus(id: string, status: AppointmentStatus) {
     try {
         if (status === 'completed') {
-            await api(`/appointments/${id}/complete`, { method: 'PATCH' })
+            await api(`/appointments/${id}/complete`, 'PATCH')
         } else if (status === 'cancelled') {
-            await api(`/appointments/${id}/cancel`, { method: 'DELETE' })
+            await api(`/appointments/${id}/cancel`, 'DELETE')
         }
         fetchAppointments();
     } catch (error: any) {
@@ -91,9 +88,7 @@ async function updateAppointmentStatus(id: string, status: AppointmentStatus) {
 async function fetchDoctors() {
     try {
         errorMessage.value = '';
-        const response = await api('/doctors');
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Erro ao buscar médicos');
+        const data = await api('/doctors');
         doctors.value = data;
     } catch (error: any) {
         errorMessage.value = error.message || 'Erro inesperado ao carregar médicos';
@@ -119,9 +114,7 @@ function getLocation(): Promise<{ lat: number; lon: number }> {
 async function fetchWeather() {
     try {
         const { lat, lon } = await getLocation();
-        const response = await api(`/weather/coords?lat=${lat}&lon=${lon}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Erro ao buscar clima");
+        const data = await api(`/weather/coords?lat=${lat}&lon=${lon}`);
         weather.value = data;
     } catch (error: any) {
         weatherError.value = error;

@@ -11,23 +11,16 @@ const password = ref('');
 
 async function handleRegister() {
     try {
-        const response = await api('/register', {
-            method: 'POST',
-            body: JSON.stringify({
+        await api('/register',
+            'POST',
+            {
                 name: name.value,
                 email: email.value,
                 password: password.value
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message);
-        }
+            }
+        );
 
         alert('Conta criada com sucesso!');
-
         router.push('/login?role=patient');
 
     } catch (error: any) {
