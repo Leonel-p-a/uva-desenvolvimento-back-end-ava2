@@ -20,7 +20,7 @@ class WeatherService {
 
         return {
             city: data.name,
-            temperature: data.main.temp,
+            temperature: Math.round(data.main.temp),
             description: data.weather[0].description,
             humidity: data.main.humidity,
         };
@@ -45,7 +45,7 @@ class WeatherService {
     
         return {
             city: data.name,
-            temperature: data.main.temp,
+            temperature: Math.round(data.main.temp),
             description: data.weather[0].description,
             humidity: data.main.humidity,
         };
